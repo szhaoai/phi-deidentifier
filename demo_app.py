@@ -12,6 +12,8 @@ import json
 # MUST be called first
 st.set_page_config(page_title="PHI/PII De-identifier", layout="wide")
 
+# spaCy models are installed during build process via requirements.txt
+
 from phi_pii_deidentifier import deidentify, ENTITY_COLORS
 from phi_pii_deidentifier import PIIHybridDetector
 
@@ -204,4 +206,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() 
+    main()
