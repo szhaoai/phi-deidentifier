@@ -1,3 +1,24 @@
+import streamlit as st
+import json
+import inspect
+
+# MUST be called first
+st.set_page_config(page_title="PHI/PII De-identifier", layout="wide")
+
+# Import from your module
+from phi_pii_deidentifier import deidentify, ENTITY_COLORS, get_global_deidentifier
+import phi_pii_deidentifier
+
+# DEBUG: Show what's being imported
+st.write("**Debug Info:**")
+st.write("phi_pii_deidentifier module location:", inspect.getfile(phi_pii_deidentifier))
+st.write("Expected location: /mount/src/phi-deidentifier/")
+
+# Check if get_global_deidentifier exists
+st.write("get_global_deidentifier exists:", hasattr(phi_pii_deidentifier, 'get_global_deidentifier'))
+
+
+
 """
 Streamlit Demo App for PHI/PII De-identifier
 
@@ -12,11 +33,20 @@ import json
 # MUST be called first
 st.set_page_config(page_title="PHI/PII De-identifier", layout="wide")
 
-# spaCy models are installed during build process via requirements.txt
+# Import from your module (phi_pii_deidentifier.py in the repo)
+from phi_pii_deidentifier import deidentify, ENTITY_COLORS, get_global_deidentifier
 
-from phi_pii_deidentifier import deidentify, ENTITY_COLORS
-from phi_pii_deidentifier import PIIHybridDetector
 
+def init_ner_status():
+    """Initialize NER status in session_state from the global deidentifier."""
+    deid = get_global_deidentifier()
+    det = deid.detector
+    return {
+        "available": det.ner_available,
+        "model": det.nlp.meta.get("name", "unknown") if det.nlp else "None",
+    }
+
+ 
 
 def get_ner_status():
     """Get NER status with lazy loading."""
@@ -57,6 +87,7 @@ def render_highlighted_text(text: str, highlights: list) -> str:
 def main():
     st.title("PHI/PII De-identifier")
     st.markdown("Production-grade de-identification pipeline for sensitive data (PII/PHI)")
+ 
 
     # NER status banner
     ner_status = get_ner_status()
@@ -65,13 +96,14 @@ def main():
             f"NER Available: True | spaCy model: {ner_status.get('model', 'unknown')}"
         )
     else:
+        error_msg = ner_status.get("error", "Unknown error")
         st.error(
-            "NER Available: False | Only regex rules are active. "
-            "Install spaCy model: `python -m spacy download en_core_web_sm`."
+            f"NER Available: False | Only regex rules are active.\n\n"
+            f"Debug info: {error_msg}\n\n"
+            f"Install spaCy model: `python -m spacy download en_core_web_sm`."
         )
 
     col1, col2 = st.columns([1, 1])
-
     # Left: Input
     with col1:
         st.subheader("Input Text")
@@ -194,8 +226,8 @@ def main():
             if st.button("Use Sample Text"):
                 sample = (
                     "Patient John Smith (SSN: 123-45-6789) visited on 01/15/2024. "
-                    "Contact: john.smith@email.com, Phone: 555-123-4567. "
-                    "Address: 123 Main Street, Boston, MA 02101."
+                    "Contact: [john.smith@email.com](mailto:john.smith@email.com), "
+                    "Phone: 555-123-4567. Address: 123 Main Street, Boston, MA 02101."
                 )
                 st.session_state["last_input"] = sample
                 st.session_state["result"] = deidentify(sample)
