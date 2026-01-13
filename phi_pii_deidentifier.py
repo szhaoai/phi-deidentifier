@@ -385,6 +385,15 @@ def deidentify(text: str, mode: str = "SAFE_HARBOR", policy: str = "HIPAA", defa
     config = DeidentifyRequest(mode=mode, policy=policy, default_action=default_action, reversible=reversible)
     deidentifier = Deidentifier(config)
     return deidentifier.deidentify(text)
+    
+# add near the bottom of the file, before __main__
+_global_deidentifier: Optional[Deidentifier] = None
+
+def get_global_deidentifier() -> Deidentifier:
+    global _global_deidentifier
+    if _global_deidentifier is None:
+        _global_deidentifier = Deidentifier()
+    return _global_deidentifier
 
 
 if __name__ == "__main__":
