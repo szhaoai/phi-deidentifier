@@ -25,10 +25,17 @@ def init_ner_status():
         "model": det.nlp.meta.get("name", "unknown") if det.nlp else "None",
     }
 
+ 
 
 # One-time NER status
 if "ner_status" not in st.session_state:
-    st.session_state["ner_status"] = init_ner_status()
+    deid = get_global_deidentifier()
+    det = deid.detector
+    st.session_state["ner_status"] = {
+        "available": det.ner_available,
+        "model": det.nlp.meta.get("name", "unknown") if det.nlp else "None",
+        "error": getattr(det, "_init_error", None),  # Add this line
+    }
 
 
 def render_highlighted_text(text: str, highlights: list) -> str:
