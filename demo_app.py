@@ -1,24 +1,6 @@
-import streamlit as st
-import json
-import inspect
+Here is the complete, corrected demo_app.py:
 
-# MUST be called first
-st.set_page_config(page_title="PHI/PII De-identifier", layout="wide")
-
-# Import from your module
-from phi_pii_deidentifier import deidentify, ENTITY_COLORS, get_global_deidentifier
-import phi_pii_deidentifier
-
-# DEBUG: Show what's being imported
-st.write("**Debug Info:**")
-st.write("phi_pii_deidentifier module location:", inspect.getfile(phi_pii_deidentifier))
-st.write("Expected location: /mount/src/phi-deidentifier/")
-
-# Check if get_global_deidentifier exists
-st.write("get_global_deidentifier exists:", hasattr(phi_pii_deidentifier, 'get_global_deidentifier'))
-
-
-
+python
 """
 Streamlit Demo App for PHI/PII De-identifier
 
@@ -37,26 +19,15 @@ st.set_page_config(page_title="PHI/PII De-identifier", layout="wide")
 from phi_pii_deidentifier import deidentify, ENTITY_COLORS, get_global_deidentifier
 
 
-def init_ner_status():
-    """Initialize NER status in session_state from the global deidentifier."""
+# One-time NER status
+if "ner_status" not in st.session_state:
     deid = get_global_deidentifier()
     det = deid.detector
-    return {
+    st.session_state["ner_status"] = {
         "available": det.ner_available,
         "model": det.nlp.meta.get("name", "unknown") if det.nlp else "None",
+        "error": getattr(det, "_init_error", None),
     }
-
- 
-
-def get_ner_status():
-    """Get NER status with lazy loading."""
-    if "ner_status" not in st.session_state:
-        detector = PIIHybridDetector()
-        st.session_state["ner_status"] = {
-            "available": detector.ner_available,
-            "model": detector.nlp.meta.get("name", "unknown") if detector.nlp else "None",
-        }
-    return st.session_state["ner_status"]
 
 
 def render_highlighted_text(text: str, highlights: list) -> str:
@@ -87,10 +58,9 @@ def render_highlighted_text(text: str, highlights: list) -> str:
 def main():
     st.title("PHI/PII De-identifier")
     st.markdown("Production-grade de-identification pipeline for sensitive data (PII/PHI)")
- 
 
     # NER status banner
-    ner_status = get_ner_status()
+    ner_status = st.session_state.get("ner_status", {})
     if ner_status.get("available"):
         st.success(
             f"NER Available: True | spaCy model: {ner_status.get('model', 'unknown')}"
@@ -104,6 +74,7 @@ def main():
         )
 
     col1, col2 = st.columns([1, 1])
+
     # Left: Input
     with col1:
         st.subheader("Input Text")
@@ -226,11 +197,12 @@ def main():
             if st.button("Use Sample Text"):
                 sample = (
                     "Patient John Smith (SSN: 123-45-6789) visited on 01/15/2024. "
-                    "Contact: [john.smith@email.com](mailto:john.smith@email.com), "
-                    "Phone: 555-123-4567. Address: 123 Main Street, Boston, MA 02101."
+                    "Contact: john.smith@email.com, Phone: 555-123-4567. "
+                    "Address: 123 Main Street, Boston, MA 02101."
                 )
                 st.session_state["last_input"] = sample
                 st.session_state["result"] = deidentify(sample)
+                st.rerun()
 
     st.markdown("---")
     st.caption(
