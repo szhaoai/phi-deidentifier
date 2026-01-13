@@ -12,40 +12,7 @@ import json
 # MUST be called first
 st.set_page_config(page_title="PHI/PII De-identifier", layout="wide")
 
-# Install spaCy models if not available (for Streamlit Cloud)
-import subprocess
-import sys
-import os
-
-def install_spacy_models():
-    """Install spaCy models for NER functionality."""
-    try:
-        import spacy
-        # Try to load models, if they fail, install them
-        try:
-            spacy.load("en_core_web_sm")
-        except OSError:
-            st.info("Installing spaCy models for enhanced detection...")
-            result = subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"], 
-                         capture_output=True, text=True)
-            if result.returncode == 0:
-                st.success("en_core_web_sm installed successfully!")
-            else:
-                st.warning("Failed to install en_core_web_sm, using regex-only detection")
-        try:
-            spacy.load("en_core_web_lg")
-        except OSError:
-            result = subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_lg"], 
-                         capture_output=True, text=True)
-            if result.returncode == 0:
-                st.success("en_core_web_lg installed successfully!")
-            else:
-                st.warning("Failed to install en_core_web_lg, using regex-only detection")
-    except ImportError:
-        pass  # spaCy not available, will use regex-only
-
-# Install models on startup
-install_spacy_models()
+# spaCy models are installed during build process via requirements.txt
 
 from phi_pii_deidentifier import deidentify, ENTITY_COLORS
 from phi_pii_deidentifier import PIIHybridDetector

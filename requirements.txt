@@ -3,8 +3,10 @@
 # Core
 streamlit>=1.28.0
 
-# spaCy for NER (optional but recommended)
+# spaCy for NER
 spacy>=3.7.0
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
+https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.1/en_core_web_lg-3.7.1-py3-none-any.whl
 
 # Testing
 pytest>=7.4.0
