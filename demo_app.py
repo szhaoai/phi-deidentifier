@@ -1,3 +1,24 @@
+import streamlit as st
+import json
+import inspect
+
+# MUST be called first
+st.set_page_config(page_title="PHI/PII De-identifier", layout="wide")
+
+# Import from your module
+from phi_pii_deidentifier import deidentify, ENTITY_COLORS, get_global_deidentifier
+import phi_pii_deidentifier
+
+# DEBUG: Show what's being imported
+st.write("**Debug Info:**")
+st.write("phi_pii_deidentifier module location:", inspect.getfile(phi_pii_deidentifier))
+st.write("Expected location: /mount/src/phi-deidentifier/")
+
+# Check if get_global_deidentifier exists
+st.write("get_global_deidentifier exists:", hasattr(phi_pii_deidentifier, 'get_global_deidentifier'))
+
+
+
 """
 Streamlit Demo App for PHI/PII De-identifier
 
