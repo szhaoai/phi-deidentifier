@@ -66,21 +66,23 @@ def render_highlighted_text(text: str, highlights: list) -> str:
 def main():
     st.title("PHI/PII De-identifier")
     st.markdown("Production-grade de-identification pipeline for sensitive data (PII/PHI)")
+ 
 
-    # NER status banner
+    # NER status banner 
     ner_status = st.session_state.get("ner_status", {})
     if ner_status.get("available"):
         st.success(
             f"NER Available: True | spaCy model: {ner_status.get('model', 'unknown')}"
         )
     else:
+        error_msg = ner_status.get("error", "Unknown error")
         st.error(
-            "NER Available: False | Only regex rules are active. "
-            "Install spaCy model: `python -m spacy download en_core_web_sm`."
+            f"NER Available: False | Only regex rules are active.\n\n"
+            f"Debug info: {error_msg}\n\n"
+            f"Install spaCy model: `python -m spacy download en_core_web_sm`."
         )
 
     col1, col2 = st.columns([1, 1])
-
     # Left: Input
     with col1:
         st.subheader("Input Text")
