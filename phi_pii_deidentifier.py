@@ -306,27 +306,28 @@ class PIIHybridDetector:
         self.use_ner = use_ner
         self._init_error = None  # Add this line
         self._init_ner()
- 
+     
     def _init_ner(self):
+        attempted_models = []
+        last_error = None
+        
         try:
             import spacy
-            # Try to load the models that are actually installed
-            # Priority: dash names first (how they're installed), then underscore names
-            for model_name in ["en_core-web-sm", "en_core_web_sm", "en_core-web-lg", "en_core_web_lg"]:
+            
+            # Try medical, then large, then small general English models
+            for model_name in ["en_core_med_lg", "en_core_web_lg", "en_core_web_sm"]:
                 try:
                     self.nlp = spacy.load(model_name)
                     self.ner_available = True
                     return
-                except OSError:
+                except Exception as e:
+                    attempted_models.append(model_name)
+                    last_error = str(e)
                     continue
-
-            self.nlp = None
-            self.ner_available = False
-        except ImportError:
-            self.nlp = None
-            self.ner_available = False
             
-            # Store error for debugging
+            # If all fail, log the issue
+            self.nlp = None
+            self.ner_available = False
             self._init_error = (
                 f"Failed to load any spaCy model. Tried: {attempted_models}. "
                 f"Last error: {last_error}"
