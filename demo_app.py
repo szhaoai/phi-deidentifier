@@ -48,15 +48,15 @@ def init_ner_status():
 
  
 
-# One-time NER status
-if "ner_status" not in st.session_state:
-    deid = get_global_deidentifier()
-    det = deid.detector
-    st.session_state["ner_status"] = {
-        "available": det.ner_available,
-        "model": det.nlp.meta.get("name", "unknown") if det.nlp else "None",
-        "error": getattr(det, "_init_error", None),  # Add this line
-    }
+def get_ner_status():
+    """Get NER status with lazy loading."""
+    if "ner_status" not in st.session_state:
+        detector = PIIHybridDetector()
+        st.session_state["ner_status"] = {
+            "available": detector.ner_available,
+            "model": detector.nlp.meta.get("name", "unknown") if detector.nlp else "None",
+        }
+    return st.session_state["ner_status"]
 
 
 def render_highlighted_text(text: str, highlights: list) -> str:
@@ -89,8 +89,8 @@ def main():
     st.markdown("Production-grade de-identification pipeline for sensitive data (PII/PHI)")
  
 
-    # NER status banner 
-    ner_status = st.session_state.get("ner_status", {})
+    # NER status banner
+    ner_status = get_ner_status()
     if ner_status.get("available"):
         st.success(
             f"NER Available: True | spaCy model: {ner_status.get('model', 'unknown')}"
