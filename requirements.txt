@@ -1,0 +1,11 @@
+# PHI/PII De-identifier Dependencies
+
+# Core
+streamlit>=1.28.0
+
+# Optional: spaCy for NER (uncomment to install)
+# spacy>=3.7.0
+# en-core-web-sm>=3.7.0
+
+# Testing
+pytest>=7.4.0
