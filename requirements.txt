@@ -3,5 +3,8 @@
 # Core
 streamlit>=1.28.0
 
+# spaCy for NER (optional but recommended)
+spacy>=3.7.0
+
 # Testing
 pytest>=7.4.0
