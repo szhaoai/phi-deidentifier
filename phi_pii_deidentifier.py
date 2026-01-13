@@ -304,8 +304,9 @@ class PIIHybridDetector:
         self.ner_available = False
         self.nlp = None
         self.use_ner = use_ner
+        self._init_error = None  # Add this line
         self._init_ner()
-
+ 
     def _init_ner(self):
         try:
             import spacy
