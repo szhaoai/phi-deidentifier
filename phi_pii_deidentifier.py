@@ -230,19 +230,18 @@ class PIIHybridDetector:
     def _init_ner(self):
         try:
             import spacy
-            try:
-                self.nlp = spacy.load("en_core_med_lg")
-            except:
+            # Try to load the models that are actually installed
+            # Priority: dash names first (how they're installed), then underscore names
+            for model_name in ["en_core-web-sm", "en_core_web_sm", "en_core-web-lg", "en_core_web_lg"]:
                 try:
-                    self.nlp = spacy.load("en_core_web_lg")
-                except:
-                    try:
-                        self.nlp = spacy.load("en_core_web_sm")
-                    except:
-                        self.nlp = None
-                        self.ner_available = False
-                        return
-            self.ner_available = True
+                    self.nlp = spacy.load(model_name)
+                    self.ner_available = True
+                    return
+                except OSError:
+                    continue
+
+            self.nlp = None
+            self.ner_available = False
         except ImportError:
             self.nlp = None
             self.ner_available = False
