@@ -310,22 +310,37 @@ class PIIHybridDetector:
         try:
             import spacy
             # Try medical, then large, then small general English models
+            attempted_models = []
+            last_error = None
+            
             for model_name in ["en_core_med_lg", "en_core_web_lg", "en_core_web_sm"]:
                 try:
                     self.nlp = spacy.load(model_name)
                     self.ner_available = True
                     return
-                except Exception:
+                except Exception as e:
+                    attempted_models.append(model_name)
+                    last_error = str(e)
                     continue
-            # If all fail
+            
+            # If all fail, log the issue
             self.nlp = None
             self.ner_available = False
-        except ImportError:
+            
+            # Store error for debugging
+            self._init_error = (
+                f"Failed to load any spaCy model. Tried: {attempted_models}. "
+                f"Last error: {last_error}"
+            )
+            
+        except ImportError as e:
             self.nlp = None
             self.ner_available = False
-        except Exception:
+            self._init_error = f"spaCy import failed: {str(e)}"
+        except Exception as e:
             self.nlp = None
             self.ner_available = False
+            self._init_error = f"Unexpected error during NER init: {str(e)}"
 
     def detect(self, text: str) -> List[Entity]:
         entities = self.rules_engine.detect(text)
