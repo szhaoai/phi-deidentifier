@@ -3,10 +3,10 @@
 # Core
 streamlit>=1.28.0
 
-# spaCy for NER
+# spaCy for NER (optional - app works with regex-only if not available)
 spacy>=3.7.0
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
-https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.1/en_core_web_lg-3.7.1-py3-none-any.whl
+en-core-web-sm>=3.7.0
+en-core-web-lg>=3.7.0
 
 # Testing
 pytest>=7.4.0

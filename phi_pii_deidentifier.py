@@ -236,7 +236,12 @@ class PIIHybridDetector:
                 try:
                     self.nlp = spacy.load("en_core_web_lg")
                 except:
-                    self.nlp = spacy.load("en_core_web_sm")
+                    try:
+                        self.nlp = spacy.load("en_core_web_sm")
+                    except:
+                        self.nlp = None
+                        self.ner_available = False
+                        return
             self.ner_available = True
         except ImportError:
             self.nlp = None
@@ -382,4 +387,3 @@ if __name__ == "__main__":
     sample = "Patient John Smith (SSN: 123-45-6789) visited on 01/15/2024. Contact: john.smith@email.com, Phone: 555-123-4567."
     result = deidentify(sample)
     print(json.dumps(result, indent=2))
-        
