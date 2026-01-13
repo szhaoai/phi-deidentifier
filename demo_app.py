@@ -1,6 +1,4 @@
-Here is the complete, corrected demo_app.py:
 
-python
 """
 Streamlit Demo App for PHI/PII De-identifier
 
