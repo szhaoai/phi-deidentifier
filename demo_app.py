@@ -13,9 +13,14 @@ import json
 st.set_page_config(page_title="PHI/PII De-identifier", layout="wide")
 
 # spaCy models are installed during build process via requirements.txt
+ 
 
 from phi_pii_deidentifier import deidentify, ENTITY_COLORS
-from phi_pii_deidentifier import PIIHybridDetector
+from phi_pii_deidentifier import get_ner_status, get_global_deidentifier
+
+# One-time NER status
+if "ner_status" not in st.session_state:
+    st.session_state["ner_status"] = get_ner_status()
 
 
 # One-time NER status
