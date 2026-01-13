@@ -12,24 +12,23 @@ import json
 # MUST be called first
 st.set_page_config(page_title="PHI/PII De-identifier", layout="wide")
 
-# spaCy models are installed during build process via requirements.txt
- 
-
-from phi_pii_deidentifier import deidentify, ENTITY_COLORS
-from phi_pii_deidentifier import get_ner_status, get_global_deidentifier
-
-# One-time NER status
-if "ner_status" not in st.session_state:
-    st.session_state["ner_status"] = get_ner_status()
+# Import from your module (phi_pii_deidentifier.py in the repo)
+from phi_pii_deidentifier import deidentify, ENTITY_COLORS, get_global_deidentifier
 
 
-# One-time NER status
-if "ner_status" not in st.session_state:
-    detector = PIIHybridDetector()
-    st.session_state["ner_status"] = {
-        "available": detector.ner_available,
-        "model": detector.nlp.meta.get("name", "unknown") if detector.nlp else "None",
+def init_ner_status():
+    """Initialize NER status in session_state from the global deidentifier."""
+    deid = get_global_deidentifier()
+    det = deid.detector
+    return {
+        "available": det.ner_available,
+        "model": det.nlp.meta.get("name", "unknown") if det.nlp else "None",
     }
+
+
+# One-time NER status
+if "ner_status" not in st.session_state:
+    st.session_state["ner_status"] = init_ner_status()
 
 
 def render_highlighted_text(text: str, highlights: list) -> str:
@@ -197,8 +196,8 @@ def main():
             if st.button("Use Sample Text"):
                 sample = (
                     "Patient John Smith (SSN: 123-45-6789) visited on 01/15/2024. "
-                    "Contact: john.smith@email.com, Phone: 555-123-4567. "
-                    "Address: 123 Main Street, Boston, MA 02101."
+                    "Contact: [john.smith@email.com](mailto:john.smith@email.com), "
+                    "Phone: 555-123-4567. Address: 123 Main Street, Boston, MA 02101."
                 )
                 st.session_state["last_input"] = sample
                 st.session_state["result"] = deidentify(sample)
