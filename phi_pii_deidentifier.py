@@ -1,3 +1,5 @@
+ 
+
 """
 PHI/PII De-identifier Module
 
@@ -121,25 +123,76 @@ class DeidentifyRequest:
 
 class PIIRegexPatterns:
     """Regex patterns for PII detection."""
-    SSN = re.compile(r'\b(?!000|666|9\d{2})\d{3}[-\s]?(?!00)\d{2}[-\s]?(?!0000)\d{4}\b', re.IGNORECASE)
-    PHONE = re.compile(r'\b(?:\+?1[-.\s]?)?(?:\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}\b')
-    EMAIL = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', re.IGNORECASE)
-    IP_ADDRESS = re.compile(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b')
-    CREDIT_CARD = re.compile(r'\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\d{3})\d{11})\b')
+    SSN = re.compile(
+        r'\b(?!000|666|9\d{2})\d{3}[-\s]?(?!00)\d{2}[-\s]?(?!0000)\d{4}\b',
+        re.IGNORECASE,
+    )
+    PHONE = re.compile(
+        r'\b(?:\+?1[-.\s]?)?(?:\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}\b'
+    )
+    EMAIL = re.compile(
+        r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+        re.IGNORECASE,
+    )
+    IP_ADDRESS = re.compile(
+        r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}'
+        r'(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b'
+    )
+    CREDIT_CARD = re.compile(
+        r'\b(?:4[0-9]{12}(?:[0-9]{3})?|'
+        r'5[1-5][0-9]{14}|'
+        r'3[47][0-9]{13}|'
+        r'6(?:011|5[0-9]{2})[0-9]{12}|'
+        r'(?:2131|1800|35\d{3})\d{11})\b'
+    )
     PASSPORT = re.compile(r'\b[0-9]{9}\b')
-    DATE = re.compile(r'\b(?:(?:0?[1-9]|1[0-2])[/-](?:0?[1-9]|[12][0-9]|3[01])[/-](?:19|20)?\d{2}|(?:19|20)?\d{2}[/-](?:0?[1-9]|1[0-2])[/-](?:0?[1-9]|[12][0-9]|3[01]))\b')
-    DATE_VERBAL = re.compile(r'\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}\b', re.IGNORECASE)
-    PERSON_NAME_TITLE = re.compile(r'\b(?:Dr\.?|Mr\.?|Mrs\.?|Ms\.?|Doctor)\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\b')
+    DATE = re.compile(
+        r'\b(?:(?:0?[1-9]|1[0-2])[/-](?:0?[1-9]|[12][0-9]|3[01])[/-](?:19|20)?\d{2}|'
+        r'(?:19|20)?\d{2}[/-](?:0?[1-9]|1[0-2])[/-](?:0?[1-9]|[12][0-9]|3[01]))\b'
+    )
+    DATE_VERBAL = re.compile(
+        r'\b(?:January|February|March|April|May|June|July|August|September|October|'
+        r'November|December)\s+\d{1,2},?\s+\d{4}\b',
+        re.IGNORECASE,
+    )
+    PERSON_NAME_TITLE = re.compile(
+        r'\b(?:Dr\.?|Mr\.?|Mrs\.?|Ms\.?|Doctor)\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\b'
+    )
     # Fallback pattern for names without title prefixes (First Last format)
     PERSON_NAME_BASIC = re.compile(r'\b[A-Z][a-z]+\s+[A-Z][a-z]+\b')
-    MRN = re.compile(r'\b(?:MRN|mrn|Medical\s*Record\s*[#]?\s*)[:#]?\s*([A-Z0-9-]{5,15})\b', re.IGNORECASE)
-    INSURANCE_ID = re.compile(r'\b(?:Policy|Policy\s*#|Member\s*ID|Insurance|Insurance\s*ID)[:#]?\s*([A-Z0-9-]{6,12})\b', re.IGNORECASE)
+    MRN = re.compile(
+        r'\b(?:MRN|mrn|Medical\s*Record\s*[#]?\s*)[:#]?\s*([A-Z0-9-]{5,15})\b',
+        re.IGNORECASE,
+    )
+    INSURANCE_ID = re.compile(
+        r'\b(?:Policy|Policy\s*#|Member\s*ID|Insurance|Insurance\s*ID)[:#]?\s*'
+        r'([A-Z0-9-]{6,12})\b',
+        re.IGNORECASE,
+    )
     VIN = re.compile(r'\b[A-HJ-NPR-Z0-9]{17}\b')
-    DEVICE_ID = re.compile(r'\b(?:Device|Device\s*ID)[:#]?\s*([A-Fa-f0-9-]{8,36})\b', re.IGNORECASE)
-    BANK_ACCOUNT = re.compile(r'\b(?:Account|Account\s*#|Account\s*Number|Bank|Bank\s*Account)[:#]?\s*([0-9]{8,17})\b', re.IGNORECASE)
-    API_KEY = re.compile(r'\b(?:api[_-]?key|apikey|token|auth[_-]?token|access[_-]?key)[=:]\s*([A-Za-z0-9_\-]{20,})\b', re.IGNORECASE)
-    PASSWORD = re.compile(r'\b(?:password|passwd|pwd)[=:]\s*([^\s]{4,})\b', re.IGNORECASE)
-    ADDRESS = re.compile(r'\b\d{1,5}\s+(?:[A-Za-z]+\s+){1,4}(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr|Lane|Ln|Court|Ct|Way|Place|Pl)\.?\b', re.IGNORECASE)
+    DEVICE_ID = re.compile(
+        r'\b(?:Device|Device\s*ID)[:#]?\s*([A-Fa-f0-9-]{8,36})\b',
+        re.IGNORECASE,
+    )
+    BANK_ACCOUNT = re.compile(
+        r'\b(?:Account|Account\s*#|Account\s*Number|Bank|Bank\s*Account)[:#]?\s*'
+        r'([0-9]{8,17})\b',
+        re.IGNORECASE,
+    )
+    API_KEY = re.compile(
+        r'\b(?:api[_-]?key|apikey|token|auth[_-]?token|access[_-]?key)[=:]\s*'
+        r'([A-Za-z0-9_\-]{20,})\b',
+        re.IGNORECASE,
+    )
+    PASSWORD = re.compile(
+        r'\b(?:password|passwd|pwd)[=:]\s*([^\s]{4,})\b',
+        re.IGNORECASE,
+    )
+    ADDRESS = re.compile(
+        r'\b\d{1,5}\s+(?:[A-Za-z]+\s+){1,4}(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|'
+        r'Blvd|Drive|Dr|Lane|Ln|Court|Ct|Way|Place|Pl)\.?\b',
+        re.IGNORECASE,
+    )
 
 
 class PIIRulesEngine:
@@ -166,10 +219,12 @@ class PIIRulesEngine:
             (PIIRegexPatterns.DATE, 0.80, Severity.LOW.value),
             (PIIRegexPatterns.DATE_VERBAL, 0.80, Severity.LOW.value),
         ]
-    
+
     def detect(self, text: str) -> List[Entity]:
         entities = []
         entity_counter = 1
+
+        # Core patterns
         for entity_type, (pattern, base_confidence, severity) in self.compiled_patterns.items():
             for match in pattern.finditer(text):
                 start, end = match.span()
@@ -178,45 +233,67 @@ class PIIRulesEngine:
                     if group_span[1] > group_span[0]:
                         start, end = group_span
                 entity = Entity(
-                    entity_id=f"E{entity_counter}", entity_type=entity_type,
-                    start=start, end=end, confidence=base_confidence,
-                    severity=severity, action=Action.REDACT.value, provenance=["regex"]
+                    entity_id=f"E{entity_counter}",
+                    entity_type=entity_type,
+                    start=start,
+                    end=end,
+                    confidence=base_confidence,
+                    severity=severity,
+                    action=Action.REDACT.value,
+                    provenance=["regex"],
                 )
                 entities.append(entity)
                 entity_counter += 1
-        # Add date patterns (both numeric and verbal formats)
+
+        # Date patterns (numeric and verbal)
         for pattern, base_confidence, severity in self.date_patterns:
             for match in pattern.finditer(text):
                 start, end = match.span()
                 entity = Entity(
-                    entity_id=f"E{entity_counter}", entity_type=EntityType.DATE.value,
-                    start=start, end=end, confidence=base_confidence,
-                    severity=severity, action=Action.REDACT.value, provenance=["regex"]
+                    entity_id=f"E{entity_counter}",
+                    entity_type=EntityType.DATE.value,
+                    start=start,
+                    end=end,
+                    confidence=base_confidence,
+                    severity=severity,
+                    action=Action.REDACT.value,
+                    provenance=["regex"],
                 )
                 entities.append(entity)
                 entity_counter += 1
-        # Add title-prefixed person names (Dr. [Name], Mr. [Name], etc.)
-        # These are processed BEFORE NER and with higher confidence to ensure they take precedence
+
+        # Title-prefixed person names
         for match in PIIRegexPatterns.PERSON_NAME_TITLE.finditer(text):
             start, end = match.span()
             entity = Entity(
-                entity_id=f"E{entity_counter}", entity_type=EntityType.PERSON_NAME.value,
-                start=start, end=end, confidence=0.95,  # Higher than NER confidence
-                severity=Severity.HIGH.value, action=Action.REDACT.value, provenance=["regex_title"]
+                entity_id=f"E{entity_counter}",
+                entity_type=EntityType.PERSON_NAME.value,
+                start=start,
+                end=end,
+                confidence=0.95,
+                severity=Severity.HIGH.value,
+                action=Action.REDACT.value,
+                provenance=["regex_title"],
             )
             entities.append(entity)
             entity_counter += 1
-        # Add basic person names (First Last format) as fallback
-        # Lower confidence since this is a simple pattern
+
+        # Basic person names (First Last)
         for match in PIIRegexPatterns.PERSON_NAME_BASIC.finditer(text):
             start, end = match.span()
             entity = Entity(
-                entity_id=f"E{entity_counter}", entity_type=EntityType.PERSON_NAME.value,
-                start=start, end=end, confidence=0.70,
-                severity=Severity.HIGH.value, action=Action.REDACT.value, provenance=["regex_basic"]
+                entity_id=f"E{entity_counter}",
+                entity_type=EntityType.PERSON_NAME.value,
+                start=start,
+                end=end,
+                confidence=0.70,
+                severity=Severity.HIGH.value,
+                action=Action.REDACT.value,
+                provenance=["regex_basic"],
             )
             entities.append(entity)
             entity_counter += 1
+
         return entities
 
 
@@ -225,38 +302,37 @@ class PIIHybridDetector:
     def __init__(self, use_ner: bool = True):
         self.rules_engine = PIIRulesEngine()
         self.ner_available = False
+        self.nlp = None
+        self.use_ner = use_ner
         self._init_ner()
-    
+
     def _init_ner(self):
         try:
             import spacy
-            try:
-                self.nlp = spacy.load("en_core_med_lg")
-            except:
+            # Try medical, then large, then small general English models
+            for model_name in ["en_core_med_lg", "en_core_web_lg", "en_core_web_sm"]:
                 try:
-                    self.nlp = spacy.load("en_core_web_lg")
-                except:
-                    try:
-                        self.nlp = spacy.load("en_core_web_sm")
-                    except:
-                        self.nlp = None
-                        self.ner_available = False
-                        return
-            self.ner_available = True
+                    self.nlp = spacy.load(model_name)
+                    self.ner_available = True
+                    return
+                except Exception:
+                    continue
+            # If all fail
+            self.nlp = None
+            self.ner_available = False
         except ImportError:
             self.nlp = None
             self.ner_available = False
-        except Exception as e:
-            # Catch any other spaCy-related errors
+        except Exception:
             self.nlp = None
             self.ner_available = False
-    
+
     def detect(self, text: str) -> List[Entity]:
         entities = self.rules_engine.detect(text)
-        if self.ner_available and self.nlp:
+        if self.use_ner and self.ner_available and self.nlp:
             entities.extend(self._detect_with_ner(text))
         return entities
-    
+
     def _detect_with_ner(self, text: str) -> List[Entity]:
         entities = []
         entity_counter = 1000
@@ -264,17 +340,27 @@ class PIIHybridDetector:
         for ent in doc.ents:
             if ent.label_ == "PERSON":
                 entity = Entity(
-                    entity_id=f"E{entity_counter}", entity_type=EntityType.PERSON_NAME.value,
-                    start=ent.start_char, end=ent.end_char, confidence=0.80,
-                    severity=Severity.HIGH.value, action=Action.REDACT.value, provenance=["ner"]
+                    entity_id=f"E{entity_counter}",
+                    entity_type=EntityType.PERSON_NAME.value,
+                    start=ent.start_char,
+                    end=ent.end_char,
+                    confidence=0.80,
+                    severity=Severity.HIGH.value,
+                    action=Action.REDACT.value,
+                    provenance=["ner"],
                 )
                 entities.append(entity)
                 entity_counter += 1
             elif ent.label_ in ("GPE", "LOC"):
                 entity = Entity(
-                    entity_id=f"E{entity_counter}", entity_type=EntityType.LOCATION.value,
-                    start=ent.start_char, end=ent.end_char, confidence=0.75,
-                    severity=Severity.MEDIUM.value, action=Action.REDACT.value, provenance=["ner"]
+                    entity_id=f"E{entity_counter}",
+                    entity_type=EntityType.LOCATION.value,
+                    start=ent.start_char,
+                    end=ent.end_char,
+                    confidence=0.75,
+                    severity=Severity.MEDIUM.value,
+                    action=Action.REDACT.value,
+                    provenance=["ner"],
                 )
                 entities.append(entity)
                 entity_counter += 1
@@ -287,27 +373,24 @@ class SpanOverlapResolver:
     def resolve(entities: List[Entity]) -> List[Entity]:
         if not entities:
             return []
-        
-        # First, sort by length (longest first), then confidence, then severity
+
         def sort_by_priority(ent: Entity) -> Tuple:
             severity_order = {"HIGH": 3, "MEDIUM": 2, "LOW": 1}
             length = ent.end - ent.start
             return (-length, ent.confidence, severity_order.get(ent.severity, 0))
-        
-        # Sort by priority
+
         sorted_entities = sorted(entities, key=sort_by_priority)
-        
-        resolved = []
+
+        resolved: List[Entity] = []
         for entity in sorted_entities:
             overlaps = False
             for existing in resolved:
-                # Two spans overlap if they share any characters
                 if entity.start < existing.end and entity.end > existing.start:
                     overlaps = True
                     break
             if not overlaps:
                 resolved.append(entity)
-        
+
         return resolved
 
 
@@ -324,9 +407,15 @@ class TextTransformer:
                 replacement = "[REDACTED]"
             elif entity.action == Action.MASK.value:
                 val = text[entity.start:entity.end]
-                replacement = val[0] + "*" * (len(val) - 2) + val[-1] if len(val) > 2 else "*" * len(val)
+                replacement = (
+                    val[0] + "*" * (len(val) - 2) + val[-1]
+                    if len(val) > 2
+                    else "*" * len(val)
+                )
             elif entity.action == Action.HASH.value:
-                replacement = hashlib.sha256(text[entity.start:entity.end].encode()).hexdigest()[:16]
+                replacement = hashlib.sha256(
+                    text[entity.start:entity.end].encode()
+                ).hexdigest()[:16]
             elif entity.action == Action.TOKENIZE.value:
                 replacement = f"[{entity.entity_type}]"
             else:
@@ -340,63 +429,118 @@ class Deidentifier:
     def __init__(self, config: Optional[DeidentifyRequest] = None):
         self.config = config or DeidentifyRequest()
         self.detector = PIIHybridDetector(use_ner=True)
-    
+
     def deidentify(self, text: str) -> Dict[str, Any]:
         timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         request = {
-            "mode": self.config.mode, "policy": self.config.policy,
-            "default_action": self.config.default_action, "reversible": self.config.reversible,
-            "locale": self.config.locale, "timestamp_iso": timestamp
+            "mode": self.config.mode,
+            "policy": self.config.policy,
+            "default_action": self.config.default_action,
+            "reversible": self.config.reversible,
+            "locale": self.config.locale,
+            "timestamp_iso": timestamp,
         }
+
         all_entities = self.detector.detect(text)
         entities = SpanOverlapResolver.resolve(all_entities)
-        deidentified_text = TextTransformer.transform(text, entities, self.config.reversible)
-        review_required = any(e.severity == Severity.HIGH.value and e.action != Action.REDACT.value for e in entities)
+        deidentified_text = TextTransformer.transform(
+            text, entities, self.config.reversible
+        )
+
+        review_required = any(
+            e.severity == Severity.HIGH.value and e.action != Action.REDACT.value
+            for e in entities
+        )
+
         highlights = []
         for entity in entities:
             color = ENTITY_COLORS.get(entity.entity_type, "#BDBDBD")
-            highlights.append({
-                "entity_id": entity.entity_id, "entity_type": entity.entity_type,
-                "start": entity.start, "end": entity.end, "confidence": entity.confidence,
-                "severity": entity.severity, "action": entity.action, "color": color,
-                "tooltip": f"{entity.entity_type} • {entity.action} • conf={entity.confidence:.2f}"
-            })
+            highlights.append(
+                {
+                    "entity_id": entity.entity_id,
+                    "entity_type": entity.entity_type,
+                    "start": entity.start,
+                    "end": entity.end,
+                    "confidence": entity.confidence,
+                    "severity": entity.severity,
+                    "action": entity.action,
+                    "color": color,
+                    "tooltip": (
+                        f"{entity.entity_type} • {entity.action} • "
+                        f"conf={entity.confidence:.2f}"
+                    ),
+                }
+            )
+
         entity_list = []
         for entity in entities:
-            entity_list.append({
-                "entity_id": entity.entity_id, "type": entity.entity_type,
-                "start": entity.start, "end": entity.end, "confidence": entity.confidence,
-                "severity": entity.severity, "action": entity.action, "replacement": entity.replacement,
-                "provenance": entity.provenance, "notes": entity.notes
-            })
+            entity_list.append(
+                {
+                    "entity_id": entity.entity_id,
+                    "type": entity.entity_type,
+                    "start": entity.start,
+                    "end": entity.end,
+                    "confidence": entity.confidence,
+                    "severity": entity.severity,
+                    "action": entity.action,
+                    "replacement": entity.replacement,
+                    "provenance": entity.provenance,
+                    "notes": entity.notes,
+                }
+            )
+
         return {
             "request": request,
             "result": {
                 "original_text_length": len(text),
                 "deidentified_text": deidentified_text,
-                "summary": {"entities_found": len(entities), "entities_transformed": len(entities), "review_required": review_required},
-                "highlights": highlights, "entities": entity_list, "risks": [], "errors": []
-            }
+                "summary": {
+                    "entities_found": len(entities),
+                    "entities_transformed": len(entities),
+                    "review_required": review_required,
+                },
+                "highlights": highlights,
+                "entities": entity_list,
+                "risks": [],
+                "errors": [],
+            },
         }
 
 
-def deidentify(text: str, mode: str = "SAFE_HARBOR", policy: str = "HIPAA", default_action: str = "REDACT", reversible: bool = False) -> Dict[str, Any]:
-    """Convenience function for de-identification."""
-    config = DeidentifyRequest(mode=mode, policy=policy, default_action=default_action, reversible=reversible)
-    deidentifier = Deidentifier(config)
-    return deidentifier.deidentify(text)
-    
-# add near the bottom of the file, before __main__
+# Reusable global deidentifier so Streamlit can inspect NER status
 _global_deidentifier: Optional[Deidentifier] = None
 
+
 def get_global_deidentifier() -> Deidentifier:
+    """Return a singleton Deidentifier instance."""
     global _global_deidentifier
     if _global_deidentifier is None:
         _global_deidentifier = Deidentifier()
     return _global_deidentifier
 
 
+def deidentify(
+    text: str,
+    mode: str = "SAFE_HARBOR",
+    policy: str = "HIPAA",
+    default_action: str = "REDACT",
+    reversible: bool = False,
+) -> Dict[str, Any]:
+    """Convenience function for de-identification."""
+    deidentifier = get_global_deidentifier()
+    # Update config for this call (simple override)
+    deidentifier.config.mode = mode
+    deidentifier.config.policy = policy
+    deidentifier.config.default_action = default_action
+    deidentifier.config.reversible = reversible
+    return deidentifier.deidentify(text)
+
+
 if __name__ == "__main__":
-    sample = "Patient John Smith (SSN: 123-45-6789) visited on 01/15/2024. Contact: john.smith@email.com, Phone: 555-123-4567."
+    sample = (
+        "Patient John Smith (SSN: 123-45-6789) visited on 01/15/2024. "
+        "Contact: [john.smith@email.com](mailto:john.smith@email.com), "
+        "Phone: 555-123-4567."
+    )
     result = deidentify(sample)
     print(json.dumps(result, indent=2))
