@@ -26,13 +26,21 @@ def install_spacy_models():
             spacy.load("en_core_web_sm")
         except OSError:
             st.info("Installing spaCy models for enhanced detection...")
-            subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"], 
+            result = subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"], 
                          capture_output=True, text=True)
+            if result.returncode == 0:
+                st.success("en_core_web_sm installed successfully!")
+            else:
+                st.warning("Failed to install en_core_web_sm, using regex-only detection")
         try:
             spacy.load("en_core_web_lg")
         except OSError:
-            subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_lg"], 
+            result = subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_lg"], 
                          capture_output=True, text=True)
+            if result.returncode == 0:
+                st.success("en_core_web_lg installed successfully!")
+            else:
+                st.warning("Failed to install en_core_web_lg, using regex-only detection")
     except ImportError:
         pass  # spaCy not available, will use regex-only
 
