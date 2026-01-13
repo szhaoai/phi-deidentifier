@@ -3,10 +3,5 @@
 # Core
 streamlit>=1.28.0
 
-# spaCy for NER (optional - app works with regex-only if not available)
-spacy>=3.7.0
-en-core-web-sm>=3.7.0
-en-core-web-lg>=3.7.0
-
 # Testing
 pytest>=7.4.0

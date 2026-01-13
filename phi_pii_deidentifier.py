@@ -246,6 +246,10 @@ class PIIHybridDetector:
         except ImportError:
             self.nlp = None
             self.ner_available = False
+        except Exception as e:
+            # Catch any other spaCy-related errors
+            self.nlp = None
+            self.ner_available = False
     
     def detect(self, text: str) -> List[Entity]:
         entities = self.rules_engine.detect(text)
