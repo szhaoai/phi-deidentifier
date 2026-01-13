@@ -159,6 +159,12 @@ The app supports different modes and policies:
 1. **spaCy model not found**
    - Install models: `python -m spacy download en_core_web_sm`
    - App will still work with regex-only detection
+   
+2. **NER Available: False on deployment**
+   - This is a common issue with cloud deployments
+   - The updated requirements.txt now includes spaCy models directly
+   - If still having issues, the app will work with regex-only detection
+   - To fix: Ensure `en_core_web_sm` and `en_core_web_lg` models are installed in your deployment environment
 
 2. **Port already in use**
    - Change port: `streamlit run demo_app.py --server.port=8502`
